@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-service
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+        version: v1
+    spec:
+      containers:
+      - name: frontend-service
+        image: gcr.io/istio-ecommerce-demo/frontend-service:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: frontend-service
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+
