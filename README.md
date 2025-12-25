@@ -1,4 +1,4 @@
-# Istio E-Commerce Demo
+# Microservices with Istio 
 
 A microservices e-commerce app on GKE with Istio for security, traffic, and observability.
 
