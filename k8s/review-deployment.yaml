@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-service
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: review-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: review-service
+        version: v1
+    spec:
+      containers:
+      - name: review-service
+        image: gcr.io/istio-ecommerce-demo/review-service:v1
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: review-service
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP

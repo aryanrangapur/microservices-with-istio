@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-service
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: inventory-service
+        version: v1
+    spec:
+      containers:
+      - name: inventory-service
+        image: gcr.io/istio-ecommerce-demo/inventory-service:v1
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: inventory-service
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
